@@ -16,6 +16,7 @@ OldData <-read.csv(file="covid91.csv",header=TRUE)
 FinalData <- OldData %>% mutate(infected = recode(infected, aids = "covid", none = "OK" )) %>% select(-one_of("X"))
 
 FinalData <- FinalData %>% mutate_if(is.character, as.factor)
+FinalData$treatment <- relevel(FinalData$treatment, ref = "placebo")
 ```
 
 # Introduction
@@ -33,7 +34,7 @@ barchartGC(~infected + treatment, data = Guys)
 barchartGC(~infected + treatment, data = Guys, type = "percent")
 ```
   
-The first bar chart displays the frequency of the people who took the drug or the placebo along with whether or not they contracted COVID or were okay afterward. For this first chart, we can see that regardless of whether they took the drug or the placebo, most people were fine after taking the drug. However, looking at the people in the study who got COVID, we can see that the people who took the drug outnumber, by a small margin, the people who took the placebo. The second chart shows the percentages of people who took the drug or the placebo and whether or not they contracted covid or were okay afterward. In this chart, we can see clearly that the people who took the drug got COVID in a higher percentage than the people who took the placebo. The placebo people also have a higher percentage of being okay afterward than those who took the drug. This is an indication that the vaccine in the study may not be effective against COVID for men in perticular. 
+The first bar chart displays the frequency of the people who took the drug or the placebo along with whether or not they contracted COVID or were okay afterward. For this first chart, we can see that regardless of whether they took the drug or the placebo, most people were fine after taking the drug. However, looking at the people in the study who got COVID, we can see that the people who took the drug outnumber, by a small margin, the people who took the placebo. The second chart shows the percentages of people who took the drug or the placebo and whether or not they contracted COVID or were okay afterward. In this chart, we can see clearly that the people who took the drug got COVID in a higher percentage than the people who took the placebo. The placebo people also have a higher percentage of being okay afterward than those who took the drug. This is an indication that the vaccine in the study may not be effective against COVID for men in particular. 
   
 ## Numerical
 
@@ -42,7 +43,9 @@ Guystable <- xtabs(~infected + treatment, data=Guys)
 rowPerc(Guystable)
 colPerc(Guystable)
 ```
- 
+  
+In the first table, we see the percent of men who took the drug and whether they were okay or got COVID, and in the second table we see the percentage of those who got COVID or were okay who got the drug or the placebo. In the second chart, we see that about 97% of people did not get COVID. In the first chart, we see that there were more patients who got COVID after taking the drug than people who took the placebo, about 10%. This means that the drug in the study is most likely not effective for men. 
+
 
 ## Inferential
 
@@ -50,8 +53,19 @@ colPerc(Guystable)
 chisq.test(Guystable)
 chisqtestGC(Guystable)
 fisher.test(Guystable)
+
+Guymod <- fisher.test(Guystable)
+Guyefficacy <- (Guymod$estimate/(Guymod$estimate+1))*100
+Guyeffuppereff <- Guymod$conf.int[2]/(Guymod$conf.int[2]+1)*100
+Guyuppereff <- Guymod$conf.int[2]
+Guyefflowereff <- (Guymod$conf.int[1]/(Guymod$conf.int[1]+1))*100
+Guylowereff <- Guymod$conf.int[1]
+options(digits = 3)
 ```
 
+The null hypothesis states that there should be no difference between the men who took the drug and the people who took the placebo. We ran a chi-square test and a fisher test to decide whether or not we accept the null hypothesis. The p-values are extremely low, meaning that we reject the null hypothesis. There is definitely a difference because males are more likely to receive COVID after receiving the drug than the placebo. The confidence interval is between 1.176 to 1.850. 
+
+We also took a look at the efficacy for guys. We used  `r Guyefficacy`%, which is based on the confidence interval `r Guyefflowereff` to `r Guyeffuppereff`. Through these observations we can see from the odds ratio that guys who took the actual drug were 0.68 times more likely to get COVID than guys who took the placebo. 
 
 # Gals
 
@@ -64,8 +78,8 @@ barchartGC(~infected + treatment, data = Gals)
 barchartGC(~infected + treatment, data = Gals, type = "percent")
 ```
   
-In the first chart, we can see that overall, the people who took the placebo contracted COVID at a higher frequency than those who took the actual drug. There's also a slightly higher frequency of people who were okay afterward that also took the drug. If we look as the second barchart with the percentages, it is more clear that a higher percentage of people who got covid are people who took the placebo. It is also important to note that the percentage of people who were okay after is slightly higher for people who took the drug over people who took the placebo. This may imply that the drug vaccine may be effective for women.  
-  
+In the first chart, we can see that overall, the people who took the placebo contracted COVID at a higher frequency than those who took the actual drug. There's also a slightly higher frequency of people who were okay afterward that also took the drug. If we look as the second bar chart with the percentages, it is more clear that a higher percentage of people who got COVID are people who took the placebo. It is also important to note that the percentage of people who were okay after is slightly higher for people who took the drug over people who took the placebo. This may imply that the drug vaccine may be effective for women.  
+   
 ## Numerical
 
 ```{r}
@@ -74,6 +88,7 @@ rowPerc(Galstable)
 colPerc(Galstable)
 ```
 
+In the first table, we can see that the percentage of people who contracted COVID is higher for girls who took the placebo than the girls who took the actual drug. From the second table we can see that 95% of people who took the drug were okay. This percentage is higher than the 91% of girls who were okay after receiving the placebo. This shows that there is at least a little difference, and that the vaccine is somewhat more effective for girls than it was for guys.
 
 ## Inferential
 
@@ -81,6 +96,14 @@ colPerc(Galstable)
 chisq.test(Galstable)
 chisqtestGC(Galstable)
 fisher.test(Galstable)
+
+Galmod <- fisher.test(Galstable)
+Galefficacy <- (Galmod$estimate/(Galmod$estimate+1))*100
+Galeffuppereff <- Galmod$conf.int[2]/(Galmod$conf.int[2]+1)*100
+Galuppereff <- Galmod$conf.int[2]
+Galefflowereff <- (Galmod$conf.int[1]/(Galmod$conf.int[1]+1))*100
+Gallowereff <- Galmod$conf.int[1]
+options(digits = 3)
 ```
 
 
@@ -93,10 +116,11 @@ LGBTQ <- filter(FinalData, LGBTQ == "gay")
 ```{r}
 barchartGC(~infected + treatment, data = LGBTQ)
 barchartGC(~infected + treatment, data = LGBTQ, type = "percent")
+options(digits = 3)
 ```
   
-In the frequency chart, we can see that there is definitely a higher frequency in COVID cases for LGBTQ individuals who took the drug rather than the placebo. The people who took the placebo and came out okay afterward are also higher in number. In the percentage chart, it is a lot more distinctive. LGBTQ people who took the actual drug experienced a higher percentage of COVID cases than LGBTQ people who took the placebo. This means that the vaccine is not effective for LGBTQ people. 
-  
+In the frequency chart, we can see that there is definitely a higher frequency in COVID cases for LGBTQ individuals who took the drug rather than the placebo. The people who took the placebo and came out okay afterward are also higher in number. In the percentage chart, it is a lot more distinctive. LGBTQ people who took the study drug experienced a higher percentage of COVID cases than LGBTQ people who took the placebo. This means that the vaccine is not effective for LGBTQ people. 
+   
 ## Numerical
 
 ```{r}
@@ -105,6 +129,7 @@ rowPerc(LGBTQtable)
 colPerc(LGBTQtable)
 ```
 
+In our numerical analysis, we can see that the second table shows the percent of the people who took the drug or placebo who were infected with covid or were okay after, and the first table shows the percent of those who got COVID or were okay and whether they got the drug or the placebo. In the first table, we can see that about 40% of people who took the drug got covid than those who took the placebo. In the second table, we can see that of all of the LGBTQ people who took the study drug, almost 8% of people contracted COVID, compared to 3% of all LGBTQ people who took the placebo. This shows that the vaccine is definitely ineffective against LGBTQ people.
 
 ## Inferential
 
@@ -112,7 +137,19 @@ colPerc(LGBTQtable)
 chisq.test(LGBTQtable)
 chisqtestGC(LGBTQtable)
 fisher.test(LGBTQtable)
+
+LGBTQmod <- fisher.test(LGBTQtable)
+LGBTQefficacy <- (LGBTQmod$estimate/(LGBTQmod$estimate+1))*100
+LGBTQeffuppereff <- LGBTQmod$conf.int[2]/(LGBTQmod$conf.int[2]+1)*100
+LGBTQuppereff <- LGBTQmod$conf.int[2]
+LGBTQefflowereff <- (LGBTQmod$conf.int[1]/(LGBTQmod$conf.int[1]+1))*100
+LGBTQlowereff <- LGBTQmod$conf.int[1]
+options(digits = 3)
 ```
+
+We performed a chi square test. There was about 2000 people in the LGBTQ community in the sample, which is pretty typical of the regular population. 
+
+We also observed the efficacy of the study drug through `r LGBTQefficacy`% on LGBTQ individuals. This is based on the confidence interval of `r LGBTQefflowereff` to `r LGBTQeffuppereff`. This means that it is actually not working for homosexuals. Observing these factors we can conclude that the drug in the study is not effective for LGBTQ individuals.
 
 
 # Drug Users
@@ -125,9 +162,9 @@ DrugUser <- filter(FinalData, DrugUser == "yes")
 barchartGC(~infected + treatment, data = DrugUser)
 barchartGC(~infected + treatment, data = DrugUser, type = "percent")
 ```
-
-
-
+ 
+For the chart containing the frequency, we can see that drug users who took the placebo actually got COVID at a higher frequency than those who took the drug. However, people who got the placebo also have a higher number of people who were okay afterward. The percentage charts also show the same thing; a higher percentage of drug users who took the placebo got COVID, but a higher number of drug users who took the placebo were also okay afterward. This most likely means that there was higher number of drug users who took the placebo overall. 
+  
 ## Numerical
 
 ```{r}
@@ -148,4 +185,5 @@ fisher.test(DrugUsertable)
 
 # Discussion/Conclusion
 
+To begin, we had to relevel one of the factor variables to ensure that we had the correct results. 
 
