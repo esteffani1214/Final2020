@@ -200,5 +200,5 @@ We also observed the efficacy of the study drug through `r DrugUserefficacy`% on
 
 # Discussion/Conclusion
 
-
+To begin, we used the relevel() function on one of the variables to ensure we got the correct results. Afterward, for each section, we used the barchartGC() function to provide two barcharts comparing individuals who took either the placebo or the actual drug and whether or not they got COVID bsaed on their respective groups (guys, gals, LGBTQ, or drug users). After, we created two-way tables to be able to explore the actual numbers behind each section. Then, we used fisher tests and chi-squared tests to observe and calculate our 95% confidence intervals as well as the p-value for each respective section. To conclude, we can see that the group of individuals who had the most successful results with the drug (that is, they had the least amount of covid cases relative to the amount of cases they had for the indviduals who took the placebo) is the people who use drugs and girls. The least effective would be the guys and LGBTQ individuals. 
 
