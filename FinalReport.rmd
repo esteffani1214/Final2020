@@ -63,9 +63,9 @@ Guylowereff <- Guymod$conf.int[1]
 options(digits = 3)
 ```
 
-The null hypothesis states that there should be no difference between the men who took the drug and the people who took the placebo. We ran a chi-square test and a fisher test to decide whether or not we accept the null hypothesis. The p-values are extremely low, meaning that we reject the null hypothesis. There is definitely a difference because males are more likely to receive COVID after receiving the drug than the placebo. The confidence interval is between 1.176 to 1.850. 
+The null hypothesis states that there should be no difference between the men who took the drug and the people who took the placebo. We ran a chi-square test and a fisher test to decide whether or not we accept the null hypothesis. The p-values are extremely low, 0.0006, meaning that we reject the null hypothesis. There is definitely a difference because males are more likely to receive COVID after receiving the drug than the placebo. The confidence interval is between 1.176 to 1.850. 
 
-We also took a look at the efficacy for guys. We used  `r Guyefficacy`%, which is based on the confidence interval `r Guyefflowereff` to `r Guyeffuppereff`. Through these observations we can see from the odds ratio that guys who took the actual drug were 0.68 times more likely to get COVID than guys who took the placebo. 
+We also took a look at the efficacy for guys. We used  `r Guyefficacy`%, which is based on the confidence interval `r Guyefflowereff` to `r Guyeffuppereff`. Through these observations we can see from the odds ratio that guys who took the actual drug were 0.68 times more likely to get COVID than guys who took the placebo. This indicates that the drug is not very effective for guys.
 
 # Gals
 
@@ -106,6 +106,9 @@ Gallowereff <- Galmod$conf.int[1]
 options(digits = 3)
 ```
 
+Looking at the chi-squared test, we see that our p-value actually comes out to be an extremely small number, less than 0.0000000000000002. That means that we have to reject the null hypothesis, and there is definitely a clear difference between the effectiveness of girls who took the actual drug and girls who took the placebo. Our 95% confidence interval is from 0.409 to 0.584.
+
+Observing the efficacy for girls, we have  `r Galefficacy`%, which is based on the confidence interval `r Galefflowereff` to `r Galeffuppereff`. This shows that the drug is somewhat more effective for girls than it was for guys.
 
 # LGBTQ
 
@@ -129,7 +132,7 @@ rowPerc(LGBTQtable)
 colPerc(LGBTQtable)
 ```
 
-In our numerical analysis, we can see that the second table shows the percent of the people who took the drug or placebo who were infected with covid or were okay after, and the first table shows the percent of those who got COVID or were okay and whether they got the drug or the placebo. In the first table, we can see that about 40% of people who took the drug got covid than those who took the placebo. In the second table, we can see that of all of the LGBTQ people who took the study drug, almost 8% of people contracted COVID, compared to 3% of all LGBTQ people who took the placebo. This shows that the vaccine is definitely ineffective against LGBTQ people.
+In our numerical analysis, we can see that the second table shows the percent of the people who took the drug or placebo who were infected with COVID or were okay after, and the first table shows the percent of those who got COVID or were okay and whether they got the drug or the placebo. In the first table, we can see that about 40% of people who took the drug got COVID than those who took the placebo. In the second table, we can see that of all of the LGBTQ people who took the study drug, almost 8% of people contracted COVID, compared to 3% of all LGBTQ people who took the placebo. This shows that the vaccine is definitely ineffective against LGBTQ people.
 
 ## Inferential
 
@@ -147,7 +150,7 @@ LGBTQlowereff <- LGBTQmod$conf.int[1]
 options(digits = 3)
 ```
 
-We performed a chi square test. There was about 2000 people in the LGBTQ community in the sample, which is pretty typical of the regular population. 
+We performed a chi square test. There was about 2000 people in the LGBTQ community in the sample, which is pretty typical of the regular population. The p-value we got is about 0.00001, and since it is smaller than 0.05, we reject the null hypothesis, and can conclude that there is definitely a difference between the likelihood of contracting COVID for LGBTQ individuals who took either the actual drug or the placebo. Through the fisher test, we have an odds ratio of 0.401, meaning that LGBTQ individuals who took the drug are 0.401 times more likely to get COVID than individuals who took the placebo.
 
 We also observed the efficacy of the study drug through `r LGBTQefficacy`% on LGBTQ individuals. This is based on the confidence interval of `r LGBTQefflowereff` to `r LGBTQeffuppereff`. This means that it is actually not working for homosexuals. Observing these factors we can conclude that the drug in the study is not effective for LGBTQ individuals.
 
@@ -173,6 +176,7 @@ rowPerc(DrugUsertable)
 colPerc(DrugUsertable)
 ```
 
+Observing the two tables, we can see that a higher percentage of people who took the placebo got COVID (66.7%) than people who took the actual drug (33.3%). From the second table, 6.46% of people who got COVID took the placebo, while 3.63% of people who got COVID took the actual drug. This supports the notion that the drug is slightly more effective for drug users.     
 
 ## Inferential 
 
@@ -180,10 +184,21 @@ colPerc(DrugUsertable)
 chisq.test(DrugUsertable)
 chisqtestGC(DrugUsertable)
 fisher.test(DrugUsertable)
+
+DrugUsermod <- fisher.test(DrugUsertable)
+DrugUserefficacy <- (DrugUsermod$estimate/(DrugUsermod$estimate+1))*100
+DrugUsereffuppereff <- DrugUsermod$conf.int[2]/(DrugUsermod$conf.int[2]+1)*100
+DrugUseruppereff <- DrugUsermod$conf.int[2]
+DrugUserefflowereff <- (DrugUsermod$conf.int[1]/(DrugUsermod$conf.int[1]+1))*100
+DrugUserlowereff <- DrugUsermod$conf.int[1]
+options(digits = 3)
 ```
 
+If we look at the chi squared test, we can see that our calculated p-value is 0.003. Because our p-value is 0.003 and it is less than 0.05, we reject the null hypothesis, and can conclude that there is a difference between the likelihood of getting COVID when a drug user takes the study drug or the placebo. We can see in the fisher test that we have an odds ratio of 1.83. The drug is more effective for drug users than the previous three observed groups. 
+
+We also observed the efficacy of the study drug through `r DrugUserefficacy`% on drug using individuals. This is based on the confidence interval of `r DrugUserefflowereff` to `r DrugUsereffuppereff`. This shows that it is quite effective for drug users. Observing these factors we can conclude that the drug in the study is more effective for people who use drugs.
 
 # Discussion/Conclusion
 
-To begin, we had to relevel one of the factor variables to ensure that we had the correct results. 
+
 
